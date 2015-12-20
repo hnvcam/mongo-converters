@@ -11,6 +11,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -34,13 +35,21 @@ public class ConverterConfigurationTest {
     public void testWriteRead() {
         String id = UUID.randomUUID().toString();
         LocalDateTime now = LocalDateTime.now();
-        Sample sample = new Sample().setId(id).setTime(now);
+        Sample sample = new Sample()
+                .setId(id)
+                .setLocalDateTime(now)
+                .setLocalDate(now.toLocalDate())
+                .setDuration(Duration.ofHours(5))
+                .setLocalTime(now.toLocalTime());
 
         sampleRepository.save(sample);
 
         Sample storedSample = sampleRepository.findOne(id);
         assertNotNull(storedSample);
-        assertThat(storedSample.getTime(), is(now));
+        assertThat(storedSample.getLocalDateTime(), is(now));
+        assertThat(storedSample.getLocalDate(), is(now.toLocalDate()));
+        assertThat(storedSample.getDuration(), is(Duration.ofHours(5)));
+        assertThat(storedSample.getLocalTime(), is(now.toLocalTime()));
     }
 
     @Test
@@ -49,12 +58,18 @@ public class ConverterConfigurationTest {
         LocalDateTime now = LocalDateTime.now();
         DBObject dbObject = new BasicDBObject("_id", id)
                 .append("_class", Sample.class.getName())
-                .append("time", now);
+                .append("localDateTime", now)
+                .append("localDate", now.toLocalDate())
+                .append("duration", Duration.ofHours(5))
+                .append("localTime", now.toLocalTime());
 
         mongoTemplate.save(dbObject, "sample");
 
         Sample storedSample = sampleRepository.findOne(id);
         assertNotNull(storedSample);
-        assertThat(storedSample.getTime(), is(now));
+        assertThat(storedSample.getLocalDateTime(), is(now));
+        assertThat(storedSample.getLocalDate(), is(now.toLocalDate()));
+        assertThat(storedSample.getDuration(), is(Duration.ofHours(5)));
+        assertThat(storedSample.getLocalTime(), is(now.toLocalTime()));
     }
 }

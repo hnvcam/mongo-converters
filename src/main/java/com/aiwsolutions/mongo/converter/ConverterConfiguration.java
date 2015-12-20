@@ -54,7 +54,13 @@ public class ConverterConfiguration {
     private List<? extends Converter> customConverters() {
         return Arrays.asList(
                 new LocalDateTimeReader(),
-                new LocalDateTimeWriter()
+                new LocalDateTimeWriter(),
+                new LocalDateReader(),
+                new LocalDateWriter(),
+                new DurationReader(),
+                new DurationWriter(),
+                new LocalTimeReader(),
+                new LocalTimeWriter()
         );
     }
 }
